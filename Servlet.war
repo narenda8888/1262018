@@ -1,0 +1,38 @@
+import java.io.*;
+import java.net.*;
+import java.text.*;
+import java.util.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class ServletA extends HttpServlet
+{
+   protected void doGet(HttpServletRequest request, HttpServletResponse response)
+                       throws ServletException, IOException
+   {
+      doit(request, response);
+   }
+
+   protected void doPost(HttpServletRequest request, HttpServletResponse response)
+                        throws ServletException, IOException
+   {
+      doit(request, response);
+   }
+
+   /**
+    * Class description goes here
+    * 
+    * @param request
+    * @param response
+    * @throws ServletException
+    * @throws IOException
+    */
+   protected void doit(HttpServletRequest request, HttpServletResponse response)
+                      throws ServletException, IOException
+   {
+      String value = request.getParameter("param-name");
+
+      ...
+      ...
+   }
+}
