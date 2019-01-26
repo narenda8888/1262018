@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ProjX" default="all" basedir=".">
+    <description>Builds, tests, and runs the project ProjX.</description>
+    <property name="build.dir" value="./"/>
+    <property name="lib.src.dir" location="${build.dir}/src/lib"/>
+    <property name="servlets.src.dir" location="${build.dir}/src/servlets"/>
+
+    <!-- Classpath to find servlet and java packages -->
+    <path id="classpath.base">
+      <pathelement location="/usr/java/latest/lib/tools.jar" />
+      <pathelement location="/opt/jboss-6.0.0.20100721-M4/lib/jbosssx.jar" />
+      <pathelement location="/opt/jboss-6.0.0.20100721-M4/client/jboss-servlet-api_3.0_spec.jar" />
+    </path>
+
+    <target name="usage">
+       <echo message="Available targets are:"/>
+       <echo message="clean            - Remove WebAppX.war and class files."/>
+       <echo message="war              - Generate war file to deploy to JBoss."/>
+       <echo message="war-deploy       - Copy war file to JBoss war file deployment directory."/>
+    </target>
+
+    <target name="clean" description="Remove .class and .jar files">
+       <delete includeEmptyDirs="true" failonerror="false">
+          <fileset dir="${servlets.src.dir}">
+             <include name="**/*.class"/>
+          </fileset>
+          <fileset dir="${lib.src.dir}">
+             <include name="**/*.class"/>
+          </fileset>
+          <fileset dir="WEB-INF/classes">
+             <include name="**/*.class"/>
+          </fileset>
+          <fileset dir="./">
+             <include name="WebAppX.war"/>
+          </fileset>
+    </target>
+
+    <target name="compile-war-lib">
+      <mkdir dir="WEB-INF/classes"/>
+      <javac srcdir="${lib.src.dir}" destdir="WEB-INF/classes" debug="true" includeAntRuntime="false">
+          <classpath refid="classpath.base"/>
+          <include name="**/*.java"/>
+      </javac>
+    </target>
+
+    <target name="compile-war" depends="compile-war-lib">
+      <mkdir dir="WEB-INF/classes"/>
+      <javac srcdir="${servlets.src.dir}" destdir="WEB-INF/classes" debug="true" includeAntRuntime="false">
+          <classpath refid="classpath.base"/>
+          <classpath refid="classpath.lib" />
+          <include name="**/*.java"/>
+      </javac>
+    </target>
+
+    <target name="war" depends="compile-war,other-dependencies-go-here">
+       <war destfile="WebAppX.war" webxml="WEB-INF/web.xml">
+          <fileset dir="./">
+             <include name="**/*.jsp"/>
+             <include name="**/*.css"/>
+             <include name="**/*.png"/>
+             <include name="index.html"/>
+             <include name="WEB-INF/**/*.class"/>
+             <exclude name="**/.svn/**"/>
+             <exclude name="test/**"/>
+             <exclude name="src/**"/>
+          </fileset>
+       </war>
+    </target>
+
+    <target name="war-deploy" depends="war" description="Deploy application as a WAR file">
+       <copy todir="${deploy.dir}" preservelastmodified="true">
+          <fileset dir=".">
+             <include name="*.war"/>
+          </fileset>
+       </copy>
+    </target>
+
+    <target name="all" depends="war" />
+
+</project>
